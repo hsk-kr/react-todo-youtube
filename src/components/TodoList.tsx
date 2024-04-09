@@ -8,25 +8,29 @@ import {
   CardFooter,
   IconButton,
   Tooltip,
+  Flex,
 } from '@chakra-ui/react';
-import { CheckIcon, EditIcon } from '@chakra-ui/icons';
+import { CheckIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Todo } from '../types/todo';
 import { useMemo } from 'react';
 
 interface TodoListProps {
   items: Todo[];
   onTodoItemEdit: (id: string) => void;
+  onTodoItemDelete: (id: string, title: string) => void;
   onTodoItemToggle: (id: string) => void;
 }
 
 interface TodoListItemProps extends Omit<Todo, 'id'> {
   onEdit: VoidFunction;
+  onDelete: VoidFunction;
   onToggle: VoidFunction;
 }
 
 const TodoList = ({
   items,
   onTodoItemEdit,
+  onTodoItemDelete,
   onTodoItemToggle,
 }: TodoListProps) => {
   const todoItems = useMemo(() => {
@@ -35,10 +39,11 @@ const TodoList = ({
         key={id}
         {...rest}
         onEdit={() => onTodoItemEdit(id)}
+        onDelete={() => onTodoItemDelete(id, rest.title)}
         onToggle={() => onTodoItemToggle(id)}
       />
     ));
-  }, [items, onTodoItemEdit, onTodoItemToggle]);
+  }, [items, onTodoItemDelete, onTodoItemEdit, onTodoItemToggle]);
 
   return (
     <Grid
@@ -61,6 +66,7 @@ const TodoListItem = ({
   note,
   done,
   onEdit,
+  onDelete,
   onToggle,
 }: TodoListItemProps) => {
   const toggleButton = {
@@ -73,15 +79,20 @@ const TodoListItem = ({
 
   return (
     <Card maxW="sm" position="relative">
-      <IconButton
-        position="absolute"
-        top={2}
-        right={2}
-        icon={<EditIcon />}
-        aria-label="Edit Todo"
-        colorScheme="orange"
-        onClick={onEdit}
-      ></IconButton>
+      <Flex position="absolute" top={2} right={2} columnGap={1}>
+        <IconButton
+          icon={<EditIcon />}
+          aria-label="Edit Todo"
+          colorScheme="orange"
+          onClick={onEdit}
+        ></IconButton>
+        <IconButton
+          icon={<DeleteIcon />}
+          aria-label="Delete Todo"
+          colorScheme="red"
+          onClick={onDelete}
+        ></IconButton>
+      </Flex>
       <CardBody h="136px" minH="136px">
         <Heading size="md" noOfLines={1}>
           {title}

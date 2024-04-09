@@ -61,6 +61,14 @@ const TodoComp = () => {
       setSelectedTodoId(id);
     }, []);
 
+  const handleTodoItemDelete: ComponentProps<
+    typeof TodoList
+  >['onTodoItemDelete'] = useCallback((id, title) => {
+    if (confirm(`Are you really want to delete "${title}" item?`)) {
+      setTodos((prevTodos) => prevTodos.filter((t) => t.id !== id));
+    }
+  }, []);
+
   const handleAddModalOpen = () => {
     setSelectedTodoId(null);
     setInitialFormData({
@@ -110,6 +118,7 @@ const TodoComp = () => {
       <TodoList
         items={todos}
         onTodoItemEdit={handleTodoItemEdit}
+        onTodoItemDelete={handleTodoItemDelete}
         onTodoItemToggle={handleTodoItemToggle}
       />
       <TodoModal
